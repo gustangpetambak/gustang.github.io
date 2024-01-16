@@ -1,0 +1,33 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Run Git commands
+      run: |
+        git config --global user.email "your email"
+        git config --global user.name "your github username"
+
+        # Install depedencies
+        npm i
+
+        # build
+        npm run build
+
+        echo 'Deploying to gh-pages...'
+
+        git add dist -f
+        git commit -m 'Deploy' 
+        git push origin `git subtree split --prefix dist main`:gh-pages --force
+
+        echo 'Done'
+      env:
+        github-token: ${{ secrets.GUSTANG }}
